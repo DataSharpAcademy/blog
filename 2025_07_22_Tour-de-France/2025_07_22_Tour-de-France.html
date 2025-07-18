@@ -381,13 +381,13 @@ The Data</a></li>
 <li><a href="#now-the-fun-begins-exploring-tour-de-france-records" id="toc-now-the-fun-begins-exploring-tour-de-france-records">3. Now the
 Fun Begins: Exploring Tour de France Records</a>
 <ul>
-<li><a href="#q1-which-city-has-been-visited-most-often" id="toc-q1-which-city-has-been-visited-most-often">3.1 Q1: Which City
-Has Been Visited Most Often?</a></li>
-<li><a href="#q2-what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour" id="toc-q2-what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour">3.2
-Q2: What Are the Smallest and Largest Time Gaps Between the Winner and
-the Runner-Up of the Tour?</a></li>
-<li><a href="#q3-who-has-finished-last-the-most" id="toc-q3-who-has-finished-last-the-most">3.3 Q3: Who has finished last
-the most?</a></li>
+<li><a href="#which-city-has-been-visited-most-often" id="toc-which-city-has-been-visited-most-often">3.1 Which City Has Been
+Visited Most Often?</a></li>
+<li><a href="#what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour" id="toc-what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour">3.2
+What Are the Smallest and Largest Time Gaps Between the Winner and the
+Runner-Up of the Tour?</a></li>
+<li><a href="#who-has-finished-last-the-most" id="toc-who-has-finished-last-the-most">3.3 Who has finished last the
+most?</a></li>
 </ul></li>
 <li><a href="#food-for-thought" id="toc-food-for-thought">4. Food for
 thought</a></li>
@@ -397,7 +397,8 @@ thought</a></li>
 
 <hr />
 <p>This blog along with all the necessary data are available in
-different formats (pdf, html, Rmd, and md) on DataSharp’s GitHub.</p>
+different formats (pdf, html, Rmd, and md) on <a href="https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France">DataSharp’s
+GitHub</a>.</p>
 <hr />
 <div id="tour-de-france-records-data-challenges-and-cycling-trivia-facts" class="section level2">
 <h2>1. Tour de France Records: Data Challenges and Cycling Trivia
@@ -595,8 +596,8 @@ issues.</p>
 </div>
 <div id="now-the-fun-begins-exploring-tour-de-france-records" class="section level2">
 <h2>3. Now the Fun Begins: Exploring Tour de France Records</h2>
-<div id="q1-which-city-has-been-visited-most-often" class="section level3">
-<h3>3.1 Q1: Which City Has Been Visited Most Often?</h3>
+<div id="which-city-has-been-visited-most-often" class="section level3">
+<h3>3.1 Which City Has Been Visited Most Often?</h3>
 <p>In this question, we aim to find the most visited city in Tour de
 France history. Here, “visited” means either the starting city or the
 finishing city of a stage, as recorded in our <code>stages</code>
@@ -646,8 +647,9 @@ head(city_names)</code></pre>
 ## [6,] &quot;Nantes&quot;    &quot;Paris&quot;</code></pre>
 <p><strong>Tip</strong>: Pay attention to the spaces around ” to “. If
 you forget them, you’ll get city names like”Paris ” or ” Lyon”, which
-will trip you up later. “Paris” (space after) and ” Paris” (space
-before) are different, even for the smartest computer.</p>
+will trip you up later. <code>&quot;Paris &quot;</code> (space after) and
+<code>&quot; Paris&quot;</code> (space before) are different, even for the
+smartest computers.</p>
 </div>
 <div id="step-3-counting-and-sorting" class="section level4">
 <h4>Step 3: Counting and Sorting</h4>
@@ -673,13 +675,15 @@ order.</li>
 <div id="step-4-checking-results-critically" class="section level4">
 <h4>Step 4: Checking Results Critically</h4>
 <p>The most visited city (136 visits) is … a city without name! 😵‍💫</p>
-<p>There must be a perfectly logical explanation to this. Let’s look for
-patterns in our data:</p>
-<pre class="r"><code>sum(city_names[, 1] == &#39;&#39;)</code></pre>
+<p>While we might first think there is another issue data, let’s shift
+our mindset and look at this as if if was <em>the right answer</em>.</p>
+<p>Let’s look for patterns in our data:</p>
+<pre class="r"><code>sum(city_names[, 1] == &#39;&#39;) ## Counting how many start cities don&#39;t have a name</code></pre>
 <pre><code>## [1] 0</code></pre>
-<pre class="r"><code>sum(city_names[, 2] == &#39;&#39;)</code></pre>
+<pre class="r"><code>sum(city_names[, 2] == &#39;&#39;) ## Counting how many arrival cities don&#39;t have a name</code></pre>
 <pre><code>## [1] 136</code></pre>
-<p>Turns out, all the blanks are arrival cities. Let’s examine them:</p>
+<p>Turns out, all the blank names are arrival cities. Let’s examine them
+further:</p>
 <pre class="r"><code>head(stages[city_names[, 2] == &#39;&#39;, ])</code></pre>
 <pre><code>##     Year       Date Stage                       Course        Distance
 ## 782 1955 1955-07-07    1b                       Dieppe  12.5 km (8 mi)
@@ -696,10 +700,11 @@ patterns in our data:</p>
 ## 858 Individual time trial         Charly Gaul (LUX)
 ## 889   Mountain time trial Federico Bahamontes (ESP)</code></pre>
 <p>If we look at the <code>Course</code> column, we can see that only
-one city name is indicated, which supports the results we got.</p>
-<p>But if we look at the <code>Type</code> column, here we see a
-potential reason emerging! The “problematic” stages are time trials,
-which start and end from the same city. Let’s verify that:</p>
+one city name is indicated, which supports the results we got. Our
+string splitting worked as expected.</p>
+<p>When we look at the <code>Type</code> column, here we see a potential
+reason emerging! The “problematic” stages are time trials, which start
+and end from the same city. Let’s verify that:</p>
 <pre class="r"><code>table(stages[city_names[, 2] == &#39;&#39;, &#39;Type&#39;])</code></pre>
 <pre><code>## 
 ##            Flat stage   High mountain stage           Hilly stage 
@@ -708,8 +713,12 @@ which start and end from the same city. Let’s verify that:</p>
 ##                    95                     1                    11 
 ##       Team time trial 
 ##                    24</code></pre>
-<p>Most of them are time trials, indeed, but not all. That brings us to
-a challenge for you:</p>
+<p>Most of them are time trials, indeed, but not all. We can imagine
+that regular stages may also start and end in the same city, like the
+Toulouse - Toulouse stage that is happening as I write these lines in
+the 2025 edition. Such stage would probably be recorded as
+<code>Toulouse</code> if our dataset was up-to-date.</p>
+<p>That brings us to a challenge for you:</p>
 <blockquote>
 <p>📝 <strong>Your turn:</strong> Can you identify all the stages that
 started and ended in the same city but were not time trials? Share your
@@ -720,13 +729,14 @@ solution in the comments below.</p>
 <h4>Step 5: Drawing Robust Conclusions</h4>
 <p>Now that we understand the blank entry, let’s revisit the actual
 results.</p>
-<p>Bordeaux appears to be the top city, followed by Pau and Paris.</p>
+<p>Bordeaux appears to be the most visited city, followed by Pau and
+Paris.</p>
 <blockquote>
 <p><strong>But… 🚨 is that really true?</strong></p>
 </blockquote>
 <p>Look closely and you’ll notice that Paris appears in different forms,
 like “Paris” and “Paris (Champs-Élysées)”. These inconsistencies can
-break your counts.</p>
+split your counts.</p>
 <p>Let’s identify and count the all possible occurrences of Bordeaux,
 Pau, and Paris. How? Do you remember <code>stringr::str_detect()</code>
 we discovered in <a href="https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/">the
@@ -735,15 +745,16 @@ previous post</a>?</p>
 <pre><code>## [1] 130</code></pre>
 <pre class="r"><code>sum(stringr::str_detect(city_names, &quot;Pau&quot;), na.rm=TRUE)</code></pre>
 <pre><code>## [1] 132</code></pre>
-<p>Looks like Bordeaux is consistent. Pau also shows up a few extra
-times. But are they real?</p>
+<p>Looks like Bordeaux is consistent. In contrast, Pau shows up a few
+extra times. But are these extra occurrences real?</p>
 <pre class="r"><code>table(city_names[stringr::str_detect(city_names, &quot;Pau&quot;)])</code></pre>
 <pre><code>## 
 ##                       Pau                  Pauillac Saint-Paul-Trois-Châteaux 
 ##                       127                         1                         4</code></pre>
-<p>Nope, they were false positive! So Bordeaux is still the most visited
-city at this point of the analysis. Even if we strongly feel that Paris
-will win.</p>
+<p>Nope, they were <strong>false positive</strong>! So Bordeaux has been
+more visited than Pau. But how many times was Paris visited? With the
+data above, we already see that Paris was visited many more times than
+Bordeaux. Let’s try to count how many more.</p>
 <pre class="r"><code>table(city_names[stringr::str_detect(city_names, &quot;Paris&quot;)])</code></pre>
 <pre><code>## 
 ##         Disneyland Paris   Le Touquet-Paris-Plage                    Paris 
@@ -754,19 +765,21 @@ will win.</p>
 <pre><code>## [1] 161</code></pre>
 <p>All names but <code>Le Touquet-Paris-Plage</code> correspond to
 Paris.</p>
-<p>When combined, Paris was visited 157 times, making it the most
-visited city in Tour de France history (as many of you probably
-expected!).</p>
+<blockquote>
+<p>🇫🇷🗼 When combined, <strong>Paris was visited 157 times</strong>,
+making it the most visited city in Tour de France history (as many of
+you probably expected!).</p>
+</blockquote>
 </div>
 </div>
-<div id="q2-what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour" class="section level3">
-<h3>3.2 Q2: What Are the Smallest and Largest Time Gaps Between the
-Winner and the Runner-Up of the Tour?</h3>
+<div id="what-are-the-smallest-and-largest-time-gaps-between-the-winner-and-the-runner-up-of-the-tour" class="section level3">
+<h3>3.2 What Are the Smallest and Largest Time Gaps Between the Winner
+and the Runner-Up of the Tour?</h3>
 <p>This question takes us into the <code>Time</code> column of the
-<code>finishers</code> table. The challenge? The data aren’t clean or
-consistent.</p>
+<code>finishers</code> table. The challenge? The data are far from being
+clean or consistent:</p>
 <ul>
-<li>For the winner, the Time column contains their total time..</li>
+<li>For the winner, the column contains their total time..</li>
 <li>For all other finishers, the column shows the time difference with
 the winner. This kind of data is usually called an “anomaly” or a delta
 from a reference value.</li>
@@ -774,13 +787,12 @@ from a reference value.</li>
 <blockquote>
 <p>💡 In many analyses, you’d want to convert anomalies back to absolute
 values. But in our case, anomalies are exactly what we need! We want to
-find the smallest and largest time differences for second-place
-finishers.</p>
+find the smallest and largest anomalies for second-place finishers.</p>
 </blockquote>
 <div id="step-1-filtering-the-data" class="section level4">
 <h4>Step 1: Filtering the Data</h4>
 <p>We are only interested in the time difference between riders ranked
-second and the winners. Therefore we can create this subset of the
+second and the winners. Therefore, we can create this subset of the
 finishers table:</p>
 <pre class="r"><code>finishers_only2nd &lt;- finishers[finishers$Rank == 2, ]
 head(finishers_only2nd, n=15)</code></pre>
@@ -804,10 +816,10 @@ head(finishers_only2nd, n=15)</code></pre>
 to 1912. So we will have to get rid of these years before
 continuing.</p>
 <blockquote>
-<p><strong>🚴 Tour trivia</strong> Between 1905 and 1912, the Tour was
-ranked by a point-based system instead of time, due to rampant cheating
-in the early editions. Curious about the juicy details? Check out the
-Wikipedia of <a href="https://en.wikipedia.org/wiki/1905_Tour_de_France">the 1905
+<p><strong>🚴 Tour trivia</strong> Between 1905 and 1912, the Tour
+riders were ranked by a point-based system instead of time, due to
+rampant cheating in the early editions. Curious about the juicy details?
+Check out the Wikipedia of <a href="https://en.wikipedia.org/wiki/1905_Tour_de_France">the 1905
 edition of the Tour de France</a>.</p>
 </blockquote>
 <p>Let’s identify what kind of “empty” we’re dealing with. Do we have
@@ -815,22 +827,23 @@ empty strings, i.e. <code>&quot;&quot;</code>, or
 <code>NA</code>/<code>NULL</code> values.</p>
 <pre class="r"><code>finishers_only2nd[finishers_only2nd$Year == 1905, &#39;Time&#39;]</code></pre>
 <pre><code>## [1] &quot;&quot;</code></pre>
-<p>Looks like these are empty strings (““), not NA or NULL. Let’s remove
-them:</p>
+<p>Looks like these are empty strings (<code>&quot;&quot;</code>), not NA or NULL.
+Let’s remove them:</p>
 <pre class="r"><code>nrow(finishers_only2nd)</code></pre>
 <pre><code>## [1] 109</code></pre>
 <pre class="r"><code>finishers_only2nd &lt;- finishers_only2nd[ ! finishers_only2nd$Time == &quot;&quot;, ]
 nrow(finishers_only2nd)</code></pre>
 <pre><code>## [1] 101</code></pre>
-<p>We’re now working with 101 editions of the Tour.</p>
+<p>We’re now working with 101 editions of the Tour when time defined the
+final ranking.</p>
 </div>
 <div id="step-2-cleaning-the-time-data" class="section level4">
 <h4>Step 2: Cleaning the Time Data</h4>
-<p>This is where the real fun starts.</p>
+<p>This is the critical, challenging step.</p>
 <p>The <code>Time</code> anomalies are stored as complex strings that we
 need to convert to numbers. Unfortunately, this way of reporting time is
-non-standard. No built-in R function handles these directly, so we’ll
-write our own!</p>
+non-standard. No built-in R function can handle these directly … so
+we’ll write our own!</p>
 <p>Here’s a custom function to turn these strings into total seconds,
 making comparisons and ranking between them straightforward. I will
 guide you through every step of the function below, but I want you to
@@ -874,42 +887,50 @@ functions we previously encountered.</p>
     total_seconds &lt;- hours * 3600 + minutes * 60 + seconds
     return(total_seconds)
 }</code></pre>
-<p><strong>⚙⚙️ How this function works?</strong></p>
+<p><strong>⚙️⚙️ How does this function work?</strong></p>
 <p>Let’s take a closer look at what this function does, and why each
 step is needed. This will help you learn how to approach similar
 problems on your own.</p>
-<p>We want to transform a time string like this: ‘+ 5h 49’ 12”’ into a
-clean number (5<em>3600+49</em>60+12 = 20952) representing the total
-number of seconds (which we can then compare, sort, etc.).</p>
+<p>We want to transform a time string like this:
+<code>+ 5h 49&#39; 12&quot;</code> into a clean number (5<em>3600+49</em>60+12 =
+20952) representing the total number of seconds (which we can then
+compare, sort, etc.).</p>
 <ol style="list-style-type: decimal">
 <li><strong>time_string is our input</strong>: This is one value from
-the Time column of our dataset. It could look like + 1h 2’ 14” or just +
-42” depending on the race.</li>
+the Time column of our dataset. It can look like
+<code>+ 1h 2&#39; 14&quot;</code> or just <code>+ 42&quot;</code> depending on the
+race. Not all time strings have entries for the hours, minutes, or
+seconds.</li>
 <li><strong>We clean up the string with stri_trans_general()</strong>:
 This dataset is full of non-ASCII characters and this column is no
-exception. My first attempts crashed because of the presence of curly
-quotes instead of regular quotes. While we could have fixed that before
-using the function, including it in the function body adds an extra
-security if we ever want to reuse this function in another context.</li>
+exception. My first attempts crashed because of the mixed presence of
+curly and straight quotes. While we could have fixed that before using
+the function, including it in the function body adds an extra security
+if we ever want to reuse this function in another context.</li>
 <li><strong>We remove the “+” sign with substr()</strong>: All our time
 strings begin with a +, but we don’t need it. Using substr(), we grab
 everything after the first character. I used <code>substr()</code> here
-as a chance to show you a new tool, though <code>str_replace()</code>
-would also work.</li>
+as a chance to show you a new tool, though
+<code>str_replace(clean_str, &quot;+&quot;, &quot;&quot;)</code> would also work.</li>
 <li><strong>We remove all the spaces</strong>: To make the parsing
 easier, we remove all whitespace, replacing them with an empty
 character. Note: <code>str_replace()</code> only removes the first
-space. We want to remove all of them, so we use
+space. Since we want to remove all of them, we use
 <code>str_replace_all()</code>.</li>
 <li><strong>We initialise all time components to zero</strong>: Not all
 time strings include hours or minutes, so we define <code>hours</code>,
-<code>minutes</code>, and <code>seconds</code> equal to 0.</li>
+<code>minutes</code>, and <code>seconds</code> equal to 0. Step 8
+requires hours, minutes, and seconds to have values. Setting them to 0
+will have no effect on the results if our time string does not contain
+entry for these parameters.</li>
 <li><strong>We extract hours if they exist</strong>: We check if the
-string contains “h”. If yes, we split it. “5h49’12&quot;” → [“5”, “49’12&quot;”]
-We save the “5” as the number of hours and update <code>clean_str</code>
-with the second element to work on the remaining part.</li>
+string contains an “h”. If yes, we split it. “5h49’12&quot;” → [“5”,
+“49’12&quot;”] We save the “5” as the number of hours and update
+<code>clean_str</code> with the second element to work on the remaining
+part.</li>
 <li><strong>We extract minutes and seconds</strong>: We apply the same
-idea, searching for “’” and “&quot;” to split the string.</li>
+idea, searching for “’” and “&quot;” to split the string for the minutes and
+then seconds.</li>
 <li><strong>We convert everything to seconds</strong>: I bring
 everything together by converting the hours and minutes to seconds, and
 summing everything.</li>
@@ -919,23 +940,29 @@ our analysis.</li>
 </ol>
 <blockquote>
 <p><strong>💬 A Quick Reality Check</strong> I’m showing you the final,
-polished version here, but it didn’t start that way. It took me almost
-an hour to get this function working properly. I started with a simple
-version that worked for one or two clean examples, then slowly added
-more logic to handle edge cases: “+” v “+”, the absence of minutes or
-seconds in some elements, the presence of non-ASCII characters (always
-them!). <strong>That’s how real coding works.</strong> You don’t have to
-write the perfect function in one go. Start with the ideal case, then
-adapt as your data shows you its quirks.</p>
+polished version of the function here, but it didn’t start that way. It
+took me almost an hour to get this function working properly. I started
+with a simple version that worked for one or two clean examples, then
+slowly added more cleaning and filtering to handle edge cases: “+” v
+“+”, the absence of hours or minutes in some elements, the presence of
+non-ASCII characters (always them!). <strong>That’s how real coding
+works.</strong> You don’t have to write the perfect function in one go.
+You start with the ideal case, then adapt your code as your data shows
+you its quirks.</p>
 </blockquote>
 <p>Now that our function works, we want to apply it to every value in
-the Time column.</p>
-<p>In R, one great way to do this is with sapply():</p>
-<p>This applies convert_time_string() to every row of the column and
-returns a vector of results.</p>
-<pre class="r"><code>total_seconds=sapply(finishers_only2nd[, &#39;Time&#39;], convert_time_string)</code></pre>
-<p>We can then append these results to our data table using cbind() (for
-column binding):</p>
+the <code>Time</code> column.</p>
+<p>In R, one great way to do this is with <code>sapply()</code>:</p>
+<p>This applies <code>convert_time_string()</code> to every row of the
+column and returns a vector of results.</p>
+<pre class="r"><code>total_seconds=sapply(finishers_only2nd[, &#39;Time&#39;], convert_time_string)
+head(total_seconds)</code></pre>
+<pre><code>## + 2h 59&#39; 21&quot; + 2h 16&#39; 14&quot;      +8&#39; 37&quot;     + 1&#39; 50&quot; + 1h 42&#39; 54&quot;    + 57&#39; 21&quot; 
+##        10761         8174          517          110         6174         3441</code></pre>
+<p>You can manually check that the number of seconds corresponds to the
+above Time string.</p>
+<p>We can then append these results to our data table using
+<code>cbind()</code> (for column binding):</p>
 <pre class="r"><code>finishers_only2nd &lt;- cbind(
                 finishers_only2nd,
                 &quot;total_seconds&quot;=total_seconds
@@ -984,32 +1011,31 @@ happened?</p>
 <ul>
 <li><code>min(x)</code> gives you the smallest value in a vector.</li>
 <li><code>which.min(x)</code> gives you the position (or row index) of
-that smallest value.</li>
+that smallest value in that vector.</li>
 </ul>
 <p>And once you have the position, you can use it to extract the
 corresponding row from <code>finishers_only2nd</code>:</p>
 <pre class="r"><code>finishers_only2nd[which.min(finishers_only2nd$total_seconds), ]</code></pre>
 <pre><code>##      Year Rank                Rider     Time                 Team total_seconds
 ## 4943 1989    2 Laurent Fignon (FRA) + 0&#39; 08&quot; Super U–Raleigh–Fiat             8</code></pre>
-<p>The legendary <a href="https://en.wikipedia.org/wiki/1989_Tour_de_France">Tour de France
+<blockquote>
+<p>✨ The legendary <a href="https://en.wikipedia.org/wiki/1989_Tour_de_France">Tour de France
 1989</a>, where American Greg LeMond snatched victory from Frenchman
 Laurent Fignon in the final Time Trial stage for 8 tiny seconds.
 💛🚴‍♂️</p>
-<blockquote>
-<p>✨ This is a great reminder that the beauty of data analysis often
-lies not in the code itself, but in the stories it helps uncover. 😊</p>
 </blockquote>
 </div>
 </div>
-<div id="q3-who-has-finished-last-the-most" class="section level3">
-<h3>3.3 Q3: Who has finished last the most?</h3>
+<div id="who-has-finished-last-the-most" class="section level3">
+<h3>3.3 Who has finished last the most?</h3>
 <p>With this final question, let’s honour those away from the
 spotlight.</p>
 <p>Cycling is a team sport: champions rely on their teammates to control
 the race, fetch bottles, and shield them from the wind. For many years,
-the last rider in the final ranking of the Tour de France—the so-called
-<em>lanterne rouge</em>—was even invited onto the final podium.</p>
-<p>So let’s do the same here. 🙇</p>
+the last rider in the final ranking of the Tour de France, the so-called
+<em>lanterne rouge</em>, was even invited onto the final podium.</p>
+<p>So let’s do the same here by paying hommage to the loyal champion of
+champions. 🙇</p>
 <div id="step-1-understanding-the-challenge" class="section level4">
 <h4>Step 1: Understanding the Challenge</h4>
 <p>Identifying the winner of each Tour de France is easy: we can use
@@ -1026,20 +1052,21 @@ rider was ranked 134th.</li>
 <h4>Step 2: Using tapply() to Extract Last Riders</h4>
 <p><strong>How to identify the list rider from each Tour de France
 edition?</strong></p>
-<p>The last Rider is identified as the rider with the largest rank
-<strong>for each edition</strong>.</p>
+<p>The <em>lanterne rouge</em> is defined as the rider with the largest
+rank <strong>for each edition</strong>.</p>
 <p>When you hear <strong>for each edition</strong> or similar criteria,
 you should think of group filtering.</p>
 <p>We need a function that does a <em>specific task</em> for <em>each
-element of the group</em>.</p>
+elements of the group</em>.</p>
 <p>The easiest way to apply a function to different subgroups within a
 dataset is with <code>tapply()</code>.</p>
 <p>It takes:</p>
 <ul>
 <li>A vector of values to analyse (here, the names of finishers),</li>
 <li>A categorical vector to group by (here, the Year of the Tour),</li>
-<li>A function to apply to each subgroup (here, <code>tail()</code> to
-get the last element),</li>
+<li>A function to apply to each subgroup (here, we can use
+<code>tail()</code> to get the last element since the riders are sroted
+from first to last),</li>
 <li>Additional arguments if needed (<code>n = 1</code> to get a single
 last name).</li>
 </ul>
@@ -1075,9 +1102,9 @@ the most times in Tour de France history.</p>
 ##                     3</code></pre>
 <blockquote>
 <p>🏅 Belgian rider Wim Vansevenant finished last in the Tour de France
-three times, making him the most frequent lanterne rouge in history. He
-summerised the value of this performance best : “Lanterne rouge is not a
-position you go for, it comes for you.” (<a href="https://en.wikipedia.org/wiki/Wim_Vansevenant">Source
+three times, making him the most frequent lanterne rouge in history. As
+he expressed it himself: “Lanterne rouge is not a position you go for,
+it comes for you.” (<a href="https://en.wikipedia.org/wiki/Wim_Vansevenant">Source
 Wikipedia</a>).</p>
 </blockquote>
 </div>
@@ -1088,18 +1115,16 @@ Wikipedia</a>).</p>
 <ol style="list-style-type: decimal">
 <li><strong>Real-world data is rarely clean or consistent.</strong> From
 empty strings and strange characters to formatting quirks and typos,
-working with messy data is the norm—not the exception.</li>
+working with messy data is the norm, not the exception.</li>
 <li><strong>When data looks strange, stop and investigate.</strong> A
-city with no name? A time gap that looks suspicious? Dig deeper. There’s
-often a logical explanation, but only if you’re curious enough to
-look.</li>
+city with no name? A time gap that looks suspicious? Dig deeper. It may
+be an issue with the data, but there could also be a logical
+explanation. But you must be curious enough to look.</li>
 <li><strong>Use built-in tools to simplify your life.</strong> Functions
-like tapply(), which.min(), or even str_detect() are powerful allies.
-Learn what’s available so you don’t have to reinvent the wheel.</li>
-<li><strong>Write functions when tasks get repetitive or
-fiddly.</strong> If you need to repeat the same logic over and over,
-that’s your cue to write a function. It’s an investment in clarity and
-reusability.</li>
+like <code>tapply()</code>, <code>which.min()</code>, or even
+<code>str_detect()</code> are powerful allies. I will try to showcase as
+many of these useful tricks in my posts, so stay alert for more (Even
+when the chosen topic may not appeal to you!).</li>
 <li><strong>And when what you need doesn’t exist, build it.</strong>
 Sometimes no function will do exactly what you want. That’s when writing
 your own becomes not just helpful, but empowering. It lets you tailor
@@ -1116,7 +1141,8 @@ calls for it.</p>
 <h2>5. What’s Next?</h2>
 <p>Ready to keep sharpening your data skills?</p>
 <p>In the next and final Tour de France post, we will dive into
-<strong>dataset merging</strong> and do basic **data visualisation.</p>
+<strong>dataset merging</strong> and do basic <strong>data
+visualisation</strong>.</p>
 <blockquote>
 <p>👉 <strong>Stay tuned</strong>, and if you have questions or examples
 you’d like us to cover in the next post, drop them in the comments
@@ -1128,6 +1154,11 @@ know more about string manipulation, can you identify which country has
 won the most Tour de France? Is it France? Or is it another one? Share
 your solution in the comment section below!</p>
 </blockquote>
+<hr />
+<p>This blog along with all the necessary data are available in
+different formats (pdf, html, Rmd, and md) on <a href="https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France">DataSharp’s
+GitHub</a>.</p>
+<hr />
 </div>
 
 
