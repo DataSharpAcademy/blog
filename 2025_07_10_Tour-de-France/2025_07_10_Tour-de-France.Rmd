@@ -5,10 +5,26 @@ categories: [""]
 tags: [""]
 author: "DataSharp Academy"
 summary: ""
+output:
+    html_document:
+      toc: true
+      theme: united
+    md_document:
+        toc: true
+    pdf_document:
+      toc: true
+      highlight: zenburn
+      latex_engine: xelatex
 ---
 
+----
 
-## Start Here: Building Data Confidence
+This blog along with all the necessary data are available in different formats (pdf, html, Rmd, and md) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_10_Tour-de-France).
+
+----
+
+
+## 1. Start Here: Building Data Confidence
 
 
 Data analysis can feel intimidating, especially when you’re working with real-world datasets that are messy, inconsistent, and rarely behave like the polished examples you find in tutorials. But this is where the real learning **and the real fun** begins.
@@ -30,7 +46,7 @@ This post is for beginners who want to learn practical data manipulation and sha
 
 
 
-## Meet the Data: The *Tour de France* Dataset
+## 2. Meet the Data: The *Tour de France* Dataset
 
 Before diving into any data analysis, it’s essential to take the time to **look at the data with your own eyes**. This step is often skipped, but it’s where many problems—and insights—first reveal themselves. **Make sure you see the data for how they are and not how you think they are.**
 
@@ -101,12 +117,12 @@ Look for potential challenges and opportunities:
 > 💛 **Key takeaway:** Before writing a single line of code, ALWAYS spend time **looking at your dataset and understanding it**. Identify how your different tables are linked to each other. This will help you anticipate challenges and guide your analysis.
 
 
-## Let’s Get to Work
+## 3. Let’s Get to Work
 
 Now that you’re familiar with the dataset, let’s start **interrogating the data**. We will begin by practicing simple R commands to extract meaningful information, exploring how to count unique values, subset conditionally, and evaluate results mindfully. This will build a solid foundation before we move on to string manipulation and data visualisation in the next posts.
 
 
-### Installing / Loading Your Packages
+### 3.1 Installing / Loading Your Packages
 
 R's default base package contains a lot of functionalities. However, it is more than likely that you will have to add new functionalities by loading what is called "packages". This analysis is no different. Installing packages in R is straightforward:
 
@@ -119,7 +135,7 @@ if(!require('stringr')) install.packages('stringr')
 Loading packages is commonly done with the `library(package_name)` function. However, it only works if the package is already installed on your machine. The code above is a bit longer, but it tries to load the package with `require()` and if the package is not found, it will first install it.
 
 
-## Where We All Begin: Loading The Data
+## 4. Where We All Begin: Loading The Data
 
 There are many ways to load data into your R environment. Since our files are plain CSVs, we’ll start simply:
 
@@ -185,9 +201,9 @@ But we made it back stronger, and now we can move on to the fun part: analysing 
 > 💛 **Key takeaway:** Don’t underestimate the challenge of loading your data AND checking they are properly loaded. If you think it will take five minutes, you will most likely “lose” time here. The unexpected always happens when using real data. I usually block out 30 to 60 minutes for loading and checking my data. If it goes smoothly, great, I get that time back. If it doesn’t, at least I avoid unnecessary stress and can keep your workflow focused.
 
 
-## What Can We Learn From These Data?
+## 5. What Can We Learn From These Data?
 
-### Q1: How Many Stage Winners in History?
+### 5.1 How Many Stage Winners in History?
 
 This simple question requires us to look closely at the `stages` table, specifically at the `Winner` column. However, we immediately notice that this information isn’t unique, as many riders have won multiple stages throughout their careers.
 
@@ -204,7 +220,7 @@ length(stage_winners)
 
 
 
-### Q2: How Many Unique Tour de France Winners in History?
+### 5.2 How Many Unique Tour de France Winners in History?
 
 At first glance, this question looks similar to the previous one, right? Yet our code will differ due to the structure of the data.
 
@@ -273,7 +289,7 @@ This is still the case as the Tour 2025 just started -- but will it still be the
 
 
 
-### Q3: How Many Riders Won the Tour de France Without Ever Winning a Stage?
+### 5.3 How Many Riders Won the Tour de France Without Ever Winning a Stage?
 
 Now, this question is more interesting because it requires us to *combine information from two tables*: the `finishers` table (to identify Tour winners) and the `stages` table (to check if those winners ever won a stage).
 
@@ -352,7 +368,7 @@ There are no riders with similar names that seem to have won stages. The same pr
 
 
 
-## Concluding Remarks
+## 6. Concluding Remarks
 
 With this simple Tour de France dataset, we were able to practice the first principles of data analysis. When I decided to analyse this dataset, I was certain everything would go smoothly and I could focus more on showcasing more functions like `setdiff()`. However, despite the simplicity of the questions asked, this exercise has highlighted several very common issues (_e.g._ issues importing data, typos in names, duplicated entries). This post ended up highlighting how to navigate noisy data -- This was not my initial goal but it was a better presentation of what data analysis truly is.
 
@@ -361,7 +377,7 @@ Using the Tour de France dataset, we’ve practised applying **first principles 
 Unexpectedly, this post became a practical lesson in **navigating noisy data**, which is a more accurate depiction of what real data analysis truly is.
 
 
-### Take-Home Messages
+### 6.1 Take-Home Messages
 
 
 1. **Always look at your data; do not take results at face value.** Small inconsistencies can lead to large errors if left unchecked.
@@ -373,7 +389,7 @@ Unexpectedly, this post became a practical lesson in **navigating noisy data**, 
 > 💛 **Key takeaway:** Good data analysis is not just about getting the numbers, but about understanding *why* they are correct, *how* you arrived at them, and *being mindful of the hidden details* in your data along the way.
 
 
-### What’s Next?
+### 6.2 What’s Next?
 
 Ready to keep sharpening your data skills?
 
@@ -385,3 +401,9 @@ In the next post, we will dive into **string manipulation**, i.e. learning how t
 
 
 > 📝 **Your learning challenge until then:** Look for messy columns in your own projects or datasets, and think about how you might clean them using string manipulation techniques. It’s a great warm-up before we jump in.
+
+----
+
+This blog along with all the necessary data are available in different formats (pdf, html, Rmd, and md) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_10_Tour-de-France).
+
+----
