@@ -1,0 +1,19 @@
+---
+title: "Welcome to the DataSharp Academy Blog! ✨"
+date: 2025-07-04
+categories: ["Announcement"]
+tags: ["DataSharp Academy", "Welcome", "Community"]
+author: "DataSharp Academy"
+summary: "A short welcome post introducing the DataSharp Academy blog and how you can shape its future."
+---
+
+### Curious about data? So are we.
+
+In this blog, I will share practical tips, real-world examples, and thoughtful reflections to help you work more confidently with data. Whether you’re just getting started or refining your skills, my goal is to keep things clear, honest, and genuinely useful. With these articles, you will learn to structure your analyses, make sense of your data, and feel good about your workflow.
+
+
+**Welcome aboard, and happy data sharpening! 🩵**
+
+
+> **💬 Share your thoughts below**
+> if there’s a topic you’d like me to write about, a question you’ve been wondering about, or a data challenge you’re stuck on. I read everything and would love to hear what you need most.
