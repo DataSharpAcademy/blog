@@ -19,7 +19,7 @@ output:
 
 ----
 
-This blog, along with all the necessary data, is available in different formats (PDF, HTML, Rmd, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
+This blog, along with all the necessary data, is available in different formats (PDF, HTML, Rmd, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/fcf7678f97f14e659db566519b724642126141a7/2025_07_30_Tour-de-France-3).
 
 ----
 
@@ -364,3 +364,9 @@ In the next blog post series, we will continue to use sports data but combine it
 
 
 > 📝 **Your learning challenge until then:** Can you identify the maximum number of stage wins for any given Tour win?
+
+----
+
+This blog, along with all the necessary data, is available in different formats (PDF, HTML, Rmd, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/fcf7678f97f14e659db566519b724642126141a7/2025_07_30_Tour-de-France-3).
+
+----
