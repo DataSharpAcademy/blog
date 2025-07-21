@@ -19,7 +19,7 @@ output:
 
 ----
 
-This blog along with all the necessary data are available in different formats (pdf, html, Rmd, and md) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
+This blog, along with all the necessary data, is available in different formats (PDF, HTML, Rmd, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
 
 ----
 
@@ -29,9 +29,9 @@ This blog along with all the necessary data are available in different formats (
 
 Our Tour de France blog series returns for a second episode in which we will learn how to manipulate strings to uncover Tour de France trivia facts.
 
-In [our last post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/), we practiced loading real-world data, asking simple questions, and dealing with the inevitable quirks of messy datasets.
+In [our last post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/), we practised loading real-world data, asking simple questions, and dealing with the inevitable quirks of messy datasets.
 
-Today, we’re gaining more confidence and taking things further.
+Today, we’re gaining more confidence and moving forward.
 
 We will use the same **Tour de France dataset** to tackle *more complex, layered questions*. These will require you to think critically, combine columns, process text, and validate your assumptions carefully.
 
@@ -41,7 +41,7 @@ This post will show you how to:
 - **Extract structured information** from unstructured text.
 - **Evaluate results mindfully** to uncover richer and more accurate insights.
 
-If you’re ready to move from “basic data handling” to “practical analysis that actually answers questions,” this post is for you.
+If you’re ready to move from “basic data handling” to “practical analysis that answers questions,” this post is for you.
 
 
 ### 1.1 Flashbash: What We Discovered Last Time
@@ -59,7 +59,7 @@ The process by which we revealed these findings highlighted how even basic data 
 
 In this post, we’re levelling up.
 
-We will explore more layered questions such as:
+We will explore more layered questions, such as:
 
 - Which city has been visited the most in Tour history?
 - What are the smallest and largest time gaps between the winner and the runner-up?
@@ -67,7 +67,7 @@ We will explore more layered questions such as:
 
 These questions will stretch our data skills further, as we will:
 
-    ❶ Practise data cleaning to prepare our data for robust analysis.
+    ❶ Practice data cleaning to prepare our data for robust analysis.
     ❷ Combine information across multiple columns.
 
 Ready? Let’s dive in.
@@ -78,7 +78,7 @@ Ready? Let’s dive in.
 
 ### 2.1 Installing / Loading Your Packages
 
-As we saw in previous posts, R's default base package contains a lot of functionalities. However, it is common to need extra functionalities that we can load with packages. This analysis is no different. Today, we will use three packages: `readr`, `stringr`, and `stringi`.
+As we saw in previous posts, R's default base package contains numerous functionalities. However, it is common to need additional functionalities that can be loaded with packages. This analysis is no different. Today, we will use three packages: `readr`, `stringr`, and `stringi`.
 
 Installing packages in R is straightforward:
 
@@ -88,10 +88,10 @@ if(!require('stringr')) install.packages('stringr')
 if(!require('stringi')) install.packages('stringi')
 ```
 
-Loading packages is commonly done with the `library(package_name)` function. However, it only works if the package is already installed on your machine. The code above is a bit longer, but it tries to load the package with `require()` and if the package is not found, it will first install it.
+Loading packages is commonly done with the `library(package_name)` function, specifying the package name. However, it only works if the package is already installed on your machine. The code above is slightly longer, but it attempts to load the package using `require()`. If the package is not found, it will first attempt to install it.
 
 
-### 2.2 Loading the Data
+### 2.2 Loading The Data
 
 If you’ve been following along, you’re already familiar with the structure of our Tour de France dataset and how to load it into R. If not, check out [the previous post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/) for a step-by-step walkthrough.
 
@@ -106,13 +106,13 @@ tours <- readr::read_csv('./data/tdf_tours.csv', locale=readr::locale(encoding="
 
 ### 2.3 Cleaning The Data
 
-In the previous post, we identified many inconsistencies in the data but we didn't fix them. We worked around them, using logic and critical thinking. In particular, we found different name spelling across different tables:
+In the previous post, we identified several inconsistencies in the data, but we didn't address them. We worked around them, using logic and critical thinking to overcome their challenges. In particular, we found different name spellings across different tables:
 
 - `"Maurice De Waele (BEL)"` vs `"Maurice Dewaele (BEL)"`
 - `"Chris Froome (GBR)"` vs `"Chris Froome (UK)"`
 
 
-To avoid unnenessary complications in our analyses below, I wanted to fix these problems first. Unfortunately, I immediately encountered a new problem. See for yourself:
+To avoid unnecessary complications in our analyses below, I wanted to fix these issues first. Unfortunately, I immediately encountered a new problem. See for yourself:
 
 ```{r echo=TRUE, results='show'}
 head(finishers[finishers$Year==2013, ])
@@ -122,34 +122,34 @@ finishers[finishers$Rider == "Chris Froome (UK)", ]
 We can see there is at least one entry for "Chris Froome (UK)" in the `finishers` table. However, when I try to capture it with a boolean expression, nothing appears. **Why is that now?**
 
 
-> ‼️ It took me some time to identify the root cause, but I eventually found an unsual character,  ***hidden* non-ASCII characters**, that looks like a space but is not a space -- if you look at the table above carefully, you'll notive the two "spaces" between the first and last names, and the last name and country code do not have the same width. That's what causes the mismatches between the strngs. But how can we see these more clearly?
+> ‼️ It took me some time to identify the root cause. Still, I eventually found an unusual character,  *hidden non-ASCII characters*, that looks like a space but is not a space. If you look at the table above carefully, you'll notice the two "spaces" between the first and last names, and the last name and country code do not have the same width. That's what causes the mismatches between the strings. But how can we see these more clearly?
 
-Since I had no idea how to do that in R (I actually used Python to load the data and discover the non-ASCII characers), I had to Google it for this post. Here is the solution I found. It is not perfect, but it does the job:
+Since I had no idea how to do that in R (I used Python to load the data and discover the non-ASCII characters), I had to Google it for this post. Here is the solution I found. It is not perfect, but it does the job:
 
 ```{r echo=TRUE, results='show'}
 tools::showNonASCII(head(finishers[finishers$Year==2013, 'Rider']))
 ```
 
-We can now clearly see that the space between the first and last name is a proper space, while the "space" between the name and the country code is something else! Since the odds of findings more non-ASCII characters elsewhere in the table are high, the simplest solution for us to move forward with our analysis is to batch-replace all the non-ASCII characters by a similar ASCII characters (_e.g._ é by e, ù by u, weird space by regular space, etc.)
+We can now clearly see that the space between the first and last name is proper, while the "space" between the name and the country code is something else! Since the odds of finding more non-ASCII characters elsewhere in the table are high, the simplest solution for us to move forward with our analysis is to batch-replace all the non-ASCII characters with similar ASCII characters (_e.g._ é by e, ù by u, weird space by regular space, etc).
 
-> **📝 Note**: Keep in mind that Data Scientists are not expected to know everything. Our strength comes from our process to finding adequate solutions. A big part of the job is to search for solutions to similar problems and to adapt them to your situation.
+> **📝 Note**: Keep in mind that Data Scientists are not expected to know everything. Our strength lies in our process for finding adequate solutions. A significant part of the job involves searching for solutions to similar problems and adapting them to your specific situation.
 
 
-Naturally, someone had that problem before and developed a solution for it. I found it in the `stringi` package, which has a function that force-converts all characters to ASCII. The `stringi::stri_trans_general()` will thus allow me to put encode all my strings similarly using standard characters.
+Naturally, someone had that problem before and developed a solution for it. I found it in the `stringi` package, which has a function that forces all characters to be converted to ASCII. The `stringi::stri_trans_general()` will thus allow me to encode all my strings similarly using standard characters.
 
 ```{r echo=TRUE, results='show'}
 finishers$Rider <- stringi::stri_trans_general(finishers$Rider, "latin-ascii")
 stages$Winner <- stringi::stri_trans_general(stages$Winner, "latin-ascii")
 ```
 
-We can check the names are now looking correct.
+We can now verify that the names are looking correct.
 
 ```{r echo=TRUE, results='show'}
 tools::showNonASCII(head(finishers[finishers$Year==2013, 'Rider']))
 ```
 Empty result, meaning there are no fields with non-ASCII characters anymore. Everything was changed to ASCII characters. Yay!
 
-We can further validate the changes by trying our first test again. We now get a match:
+We can further validate the changes by re-running our first test. We now get a match:
 
 ```{r echo=TRUE, results='show'}
 finishers[finishers$Rider == "Chris Froome (UK)", ]
@@ -162,13 +162,13 @@ finishers[finishers$Rider == "Chris Froome (UK)", 'Rider'] <- "Chris Froome (GBR
 stages[stages$Winner == 'Maurice Dewaele (BEL)', 'Winner'] <- 'Maurice De Waele (BEL)'
 ```
 
-And, as good practice habit, we always check that the data were really modified.
+And, as a good practice habit, we always check that the data was modified as expected.
 
 ```{r echo=TRUE, results='show'}
 finishers[finishers$Rider == "Chris Froome (UK)", ]
 ```
 
-> 📝 **Note**: Since I modified the Rider `columns` from `finishers`, I also add to modify the `Winner` column from `stages` to ensure that the pairings would still be there, even for those without spelling issues.
+> 📝 **Note**: Since I modified the Rider `columns` from `finishers`, I also had to modify the `Winner` column from `stages` to ensure that the pairings would still be there, even for those without spelling issues.
 
 
 
@@ -181,9 +181,9 @@ finishers[finishers$Rider == "Chris Froome (UK)", ]
 
 ### 3.1 Which City Has Been Visited Most Often?
 
-In this question, we aim to find the most visited city in Tour de France history. Here, “visited” means either the starting city or the finishing city of a stage, as recorded in our `stages` table.
+In this question, we aim to find the most visited city in the history of the Tour de France. Here, “visited” means either the starting city or the finishing city of a stage, as recorded in our `stages` table.
 
-This is a fun way to practice string splitting, counting, and sorting in R while building your instinct for checking results critically.
+This is a fun way to practice string splitting, counting, and sorting in R while developing your critical thinking skills for evaluating results.
 
 
 #### Step 1: Look at the Data
@@ -194,7 +194,7 @@ Before coding, let’s check how the information is structured:
 head(stages)
 ```
 
-You see the `Course` column contains entries like "Paris to Lyon", "Lyon to Marseille", etc. We need to cut these strings using the " to " keyboard and to keep the two outputs.
+You see, the `Course` column contains entries such as "Paris to Lyon", "Lyon to Marseille", and so on. We need to cut these strings using the " to " keyboard and keep the two outputs.
 
 
 #### Step 2: Splitting City Names
@@ -209,7 +209,7 @@ city_names <- stringr::str_split(stages$Course, ' to ', simplify=TRUE)
 head(city_names)
 ```
 
-**Tip**: Pay attention to the spaces around " to ". If you forget them, you’ll get city names like "Paris " or " Lyon", which will trip you up later. `"Paris "` (space after) and `" Paris"` (space before) are different, even for the smartest computers.
+**Tip**: Pay attention to the spaces around " to ". If you forget them, you’ll get city names like "Paris " or " Lyon", which will trip you up later. `"Paris "` (space after) and `" Paris"` (space before) are different, even for the most intelligent computers.
 
 
 #### Step 3: Counting and Sorting
@@ -217,7 +217,7 @@ head(city_names)
 Let’s count how often each city appears as a start or end city:
 
 - Use `table()` to count each city’s occurrences across the two columns.
-- Use `sort()` the rank the counts by decreseasing order.
+- Use `sort()` to rank the counts in decreasing order.
 - Use `head(..., n=20)` to show the top 20.
 
 
@@ -227,9 +227,9 @@ head(sort(table(city_names), decreasing=TRUE), n=20)
 
 #### Step 4: Checking Results Critically
 
-The most visited city (136 visits) is ... a city without name! 😵‍💫
+The most visited city (136 visits) is ... a city without a name! 😵‍💫
 
-While we might first think there is another issue data, let's shift our mindset and look at this as if if was *the right answer*.
+While we might first think there is another issue with the data, let's shift our mindset and look at this as if it were *the correct answer*.
 
 Let's look for patterns in our data:
 
@@ -238,22 +238,22 @@ sum(city_names[, 1] == '') ## Counting how many start cities don't have a name
 sum(city_names[, 2] == '') ## Counting how many arrival cities don't have a name
 ```
 
-Turns out, all the blank names are arrival cities. Let’s examine them further:
+It turns out that all the blank names are arrival cities. Let’s examine them further:
 
 
 ```{r echo=TRUE, results='show'}
 head(stages[city_names[, 2] == '', ])
 ```
 
-If we look at the `Course` column, we can see that only one city name is indicated, which supports the results we got. Our string splitting worked as expected.
+If we examine the `Course` column, we can see that only one city name is specified, which supports the results we obtained. Our string splitting worked as expected.
 
-When we look at the `Type` column, here we see a potential reason emerging! The "problematic" stages are time trials, which start and end from the same city. Let's verify that:
+When we examine the `Type` column, a potential reason emerges. The "problematic" stages are time trials that often start and end in the same city. Let's verify that:
 
 ```{r echo=TRUE, results='show'}
 table(stages[city_names[, 2] == '', 'Type'])
 ```
 
-Most of them are time trials, indeed, but not all. We can imagine that regular stages may also start and end in the same city, like the Toulouse - Toulouse stage that is happening as I write these lines in the 2025 edition. Such stage would probably be recorded as `Toulouse` if our dataset was up-to-date.
+Most of them are time trials, indeed, but not all of them. Regular stages may also start and end in the same city, such as the Toulouse-Toulouse stage, which is happening as I write these lines in the 2025 edition. Such a stage would probably be recorded as `Toulouse` if our dataset were up to date.
 
 That brings us to a challenge for you:
 
@@ -264,13 +264,13 @@ That brings us to a challenge for you:
 
 Now that we understand the blank entry, let’s revisit the actual results.
 
-Bordeaux appears to be the most visited city, followed by Pau and Paris.
+Bordeaux is the most visited city, followed by Pau and Paris.
 
 > **But… 🚨 is that really true?**
 
 Look closely and you’ll notice that Paris appears in different forms, like "Paris" and "Paris (Champs-Élysées)". These inconsistencies can split your counts.
 
-Let's identify and count the all possible occurrences of Bordeaux, Pau, and Paris. How? Do you remember `stringr::str_detect()` we discovered in [the previous post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/)?
+Let's identify and count all possible occurrences of Bordeaux, Pau, and Paris. How? Do you remember `stringr::str_detect()` we discovered in [the previous post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/)?
 
 ```{r echo=TRUE, results='show'}
 sum(stringr::str_detect(city_names, "Bordeaux"), na.rm=TRUE)
@@ -282,7 +282,7 @@ Looks like Bordeaux is consistent. In contrast, Pau shows up a few extra times. 
 table(city_names[stringr::str_detect(city_names, "Pau")])
 ```
 
-Nope, they were **false positive**! So Bordeaux has been more visited than Pau. But how many times was Paris visited? With the data above, we already see that Paris was visited many more times than Bordeaux. Let's try to count how many more.
+Nope, they were **false positives**! Bordeaux has been visited more than Pau. But how many times was Paris visited? With the data above, we already see that Paris was visited many more times than Bordeaux. Let's count how many more there are.
 
 ```{r echo=TRUE, results='show'}
 table(city_names[stringr::str_detect(city_names, "Paris")])
@@ -302,32 +302,32 @@ All names but `Le Touquet-Paris-Plage` correspond to Paris.
 This question takes us into the `Time` column of the `finishers` table. The challenge? The data are far from being clean or consistent:
 
 - For the winner, the column contains their total time..
-- For all other finishers, the column shows the time difference with the winner. This kind of data is usually called an “anomaly” or a delta from a reference value.
+- For all other finishers, the column shows the time difference with the winner. This type of data is typically referred to as an “anomaly” or a deviation from a reference value.
 
-> 💡 In many analyses, you’d want to convert anomalies back to absolute values. But in our case, anomalies are exactly what we need! We want to find the smallest and largest anomalies for second-place finishers.
+> 💡 In many analyses, you’d want to convert anomalies back to absolute values. But in our case, anomalies are precisely what we need! We aim to identify the smallest and largest anomalies among second-place finishers.
 
 
 #### Step 1: Filtering the Data
 
-We are only interested in the time difference between riders ranked second and the winners. Therefore, we can create this subset of the finishers table:
+We are only interested in the time difference between the riders ranked second and the winners. Therefore, we can create this subset of the finishers table:
 
 ```{r echo=TRUE, results='show'}
 finishers_only2nd <- finishers[finishers$Rank == 2, ]
 head(finishers_only2nd, n=15)
 ```
 
-We can already see that the information is missing for the years 1905 to 1912. So we will have to get rid of these years before continuing.
+We can already see that the information is missing for the years 1905 to 1912. Therefore, we will need to eliminate these years before proceeding.
 
 > **🚴 Tour trivia** Between 1905 and 1912, the Tour riders were ranked by a point-based system instead of time, due to rampant cheating in the early editions. Curious about the juicy details? Check out the Wikipedia of [the 1905 edition of the Tour de France](https://en.wikipedia.org/wiki/1905_Tour_de_France).
 
 
-Let's identify  what kind of “empty” we’re dealing with. Do we have empty strings, i.e. `""`, or `NA`/`NULL` values.
+Let's identify what kind of “empty” we’re dealing with. Do we have empty strings, i.e. `""`, or `NA`/`NULL` values?
 
 ```{r echo=TRUE, results='show'}
 finishers_only2nd[finishers_only2nd$Year == 1905, 'Time']
 ```
 
-Looks like these are empty strings (`""`), not NA or NULL. Let’s remove them:
+It appears that these are empty strings (`""`), not NA or NULL. Let’s remove them:
 
 
 ```{r echo=TRUE, results='show'}
@@ -345,7 +345,7 @@ This is the critical, challenging step.
 
 The `Time` anomalies are stored as complex strings that we need to convert to numbers. Unfortunately, this way of reporting time is non-standard. No built-in R function can handle these directly ... so we’ll write our own!
 
-Here’s a custom function to turn these strings into total seconds, making comparisons and ranking between them straightforward. I will guide you through every step of the function below, but I want you to first take some time to read and try to understand it. I only used functions we previously encountered.
+Here’s a custom function to turn these strings into total seconds, making comparisons and ranking between them straightforward. I will guide you through every step of the function below, but I would like you to take some time to read and try to understand it first. I only used functions we previously encountered.
 
 
 ```{r echo=TRUE, results='show'}
@@ -356,10 +356,10 @@ convert_time_string <- function(time_string) {
     ## Remove '+' prefix
     clean_str <- substr(clean_str, 2, nchar(time_string))
 
-    ## Removing all spaces from string
+    ## Removing all spaces from the string
     clean_str <- stringr::str_replace_all(clean_str, " ", "")
 
-    # Settings everything to 0
+    # Setting everything to 0
     hours <- minutes <- seconds <- 0
 
     # Extracting hours
@@ -391,15 +391,15 @@ convert_time_string <- function(time_string) {
 
 **⚙️⚙️ How does this function work?**
 
-Let’s take a closer look at what this function does, and why each step is needed. This will help you learn how to approach similar problems on your own.
+Let’s take a closer look at what this function does and why each step is needed. This will help you learn how to approach similar problems on your own.
 
 We want to transform a time string like this: `+ 5h 49' 12"` into a clean number (5*3600+49*60+12 = 20952) representing the total number of seconds (which we can then compare, sort, etc.).
 
 1. **time_string is our input**: This is one value from the Time column of our dataset. It can look like `+ 1h 2' 14"` or just `+ 42"` depending on the race. Not all time strings have entries for the hours, minutes, or seconds.
-2. **We clean up the string with stri_trans_general()**: This dataset is full of non-ASCII characters and this column is no exception. My first attempts crashed because of the mixed presence of curly and straight quotes. While we could have fixed that before using the function, including it in the function body adds an extra security if we ever want to reuse this function in another context.
-3. **We remove the “+” sign with substr()**: All our time strings begin with a +, but we don’t need it. Using substr(), we grab everything after the first character. I used `substr()` here as a chance to show you a new tool, though `str_replace(clean_str, "+", "")` would also work.
-4. **We remove all the spaces**: To make the parsing easier, we remove all whitespace, replacing them with an empty character. Note: `str_replace()` only removes the first space. Since we want to remove all of them, we use `str_replace_all()`.
-5. **We initialise all time components to zero**: Not all time strings include hours or minutes, so we define `hours`, `minutes`, and `seconds` equal to 0. Step 8 requires hours, minutes, and seconds to have values. Setting them to 0 will have no effect on the results if our time string does not contain entry for these parameters.
+2. **We clean up the string with stri_trans_general()**: This dataset is full of non-ASCII characters, and this column is no exception. My first attempts crashed because of the mixed presence of curly and straight quotes. While we could have fixed that before using the function, including it in the function body adds an extra security if we ever want to reuse this function in another context.
+3. **We remove the “+” sign with substr()**: All our time strings begin with a +, but we don’t need it. Using substr(), we grab everything after the first character. I used `substr()` here as an opportunity to demonstrate a new tool, although `str_replace(clean_str, "+", "")` would also work.
+4. **We remove all the spaces**: To make the parsing easier, we remove all whitespaces, replacing them with an empty character. Note: `str_replace()` only removes the first space. Since we want to remove all of them, we use `str_replace_all()`.
+5. **We initialise all time components to zero**: Not all time strings include hours or minutes, so we define `hours`, `minutes`, and `seconds` equal to 0. Step 8 requires hours, minutes, and seconds to have values. Setting them to 0 will not affect the results if our time string does not contain an entry for these parameters.
 6. **We extract hours if they exist**: We check if the string contains an "h". If yes, we split it. "5h49'12\"" → ["5", "49'12\""] We save the “5” as the number of hours and update `clean_str` with the second element to work on the remaining part.
 7. **We extract minutes and seconds**: We apply the same idea, searching for "'" and "\"" to split the string for the minutes and then seconds.
 8. **We convert everything to seconds**: I bring everything together by converting the hours and minutes to seconds, and summing everything.
@@ -453,7 +453,7 @@ print(paste("Maximal time between first and second riders:", max(finishers_only2
 - The smallest gap was just **8 seconds**.
 - The largest gap was almost 3 hours! 😮
 
-I can't decide which result is the most surprising.
+I'm having trouble deciding which result is the most surprising.
 
 But that 8-second margin sounds intense. Can we find out when that happened?
 
@@ -481,7 +481,7 @@ With this final question, let’s honour those away from the spotlight.
 
 Cycling is a team sport: champions rely on their teammates to control the race, fetch bottles, and shield them from the wind. For many years, the last rider in the final ranking of the Tour de France, the so-called _lanterne rouge_, was even invited onto the final podium.
 
-So let's do the same here by paying hommage to the loyal champion of champions. 🙇
+So let's do the same here by paying homage to the loyal champion of champions. 🙇
 
 #### Step 1: Understanding the Challenge
 
@@ -502,7 +502,7 @@ The _lanterne rouge_ is defined as the rider with the largest rank **for each ed
 
 When you hear **for each edition** or similar criteria, you should think of group filtering.
 
-We need a function that does a _specific task_ for _each elements of the group_.
+We need a function that performs a _specific task_ for _each element of the group_.
 
 The easiest way to apply a function to different subgroups within a dataset is with `tapply()`.
 
@@ -510,7 +510,7 @@ It takes:
 
 - A vector of values to analyse (here, the names of finishers),
 - A categorical vector to group by (here, the Year of the Tour),
-- A function to apply to each subgroup (here, we can use `tail()` to get the last element since the riders are sroted from first to last),
+- A function to apply to each subgroup (here, we can use `tail()` to get the last element since the riders are sorted from first to last),
 - Additional arguments if needed (`n = 1` to get a single last name).
 
 Since our data are ordered from first to last rider, `tail(..., n=1)` will return the last rider for each year, giving us exactly what we need.
@@ -519,7 +519,7 @@ Since our data are ordered from first to last rider, `tail(..., n=1)` will retur
 ```{r echo=TRUE, results='show'}
 last_each_tour <- tapply(finishers$Rider, finishers$Year, tail, n=1)
 head(last_each_tour)
-## Let's make these data look sharper
+## Let's make this table look sharper
 last_each_tour <- data.frame("Year" = names(last_each_tour), "Name" = last_each_tour)
 head(last_each_tour)
 ```
@@ -528,7 +528,7 @@ head(last_each_tour)
 
 #### Step 3: Counting Who Came Last Most Often
 
-Now, we simply count how often each name appears in our `last_each_tour` table to find the rider who finished last the most times in Tour de France history.
+Now, we count how often each name appears in our `last_each_tour` table to find the rider who finished last the most times in Tour de France history.
 
 ```{r echo=TRUE, results='show'}
 sort(table(last_each_tour$Name), decreasing=TRUE)[1]
@@ -545,8 +545,8 @@ sort(table(last_each_tour$Name), decreasing=TRUE)[1]
 
 1. **Real-world data is rarely clean or consistent.** From empty strings and strange characters to formatting quirks and typos, working with messy data is the norm, not the exception.
 2. **When data looks strange, stop and investigate.** A city with no name? A time gap that looks suspicious? Dig deeper. It may be an issue with the data, but there could also be a logical explanation. But you must be curious enough to look.
-3. **Use built-in tools to simplify your life.** Functions like `tapply()`, `which.min()`, or even `str_detect()` are powerful allies. I will try to showcase as many of these useful tricks in my posts, so stay alert for more (Even when the chosen topic may not appeal to you!).
-4. **And when what you need doesn’t exist, build it.** Sometimes no function will do exactly what you want. That’s when writing your own becomes not just helpful, but empowering. It lets you tailor your analysis to your data, not the other way around.
+3. **Use built-in tools to simplify your life.** Functions like `tapply()`, `which.min()`, or even `str_detect()` are powerful allies. I will showcase as many of these useful tricks in my posts, so stay alert for more (Even when the chosen topic may not appeal to you!).
+4. **And when what you need doesn’t exist, build it.** Sometimes, no function will do exactly what you want. That’s when writing your own becomes not just helpful, but empowering. It lets you tailor your analysis to your data, not the other way around.
 
 
 > 💛 **Key takeaway:** Good data analysis isn’t about knowing every trick. It’s about staying curious, being resourceful, and feeling confident enough to build the tools you need when the situation calls for it.
@@ -568,6 +568,6 @@ In the next and final Tour de France post, we will dive into **dataset merging**
 
 ----
 
-This blog along with all the necessary data are available in different formats (pdf, html, Rmd, and md) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
+This blog, along with all the necessary data, is available in different formats (PDF, HTML, RMD, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
 
 ----
