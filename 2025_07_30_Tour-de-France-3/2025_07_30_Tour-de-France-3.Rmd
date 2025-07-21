@@ -1,0 +1,366 @@
+---
+title: ""
+date: 2025-07-10
+categories: [""]
+tags: [""]
+author: "DataSharp Academy"
+summary: ""
+output:
+    html_document:
+      toc: true
+      theme: united
+    md_document:
+        toc: true
+    pdf_document:
+      toc: true
+      highlight: zenburn
+      latex_engine: xelatex
+---
+
+----
+
+This blog, along with all the necessary data, is available in different formats (PDF, HTML, Rmd, and MD) on [DataSharp's GitHub](https://github.com/DataSharpAcademy/blog/tree/360dcc5968780d69b254406abe9e15323f6a34be/2025_07_22_Tour-de-France).
+
+----
+
+## Tour de France Legends: A Data Dive into Records
+
+Our Tour de France blog series returns for a third and final episode, in which we will learn how to combine tables, manipulate strings, and capitalise on all acquired knowledge to uncover new Tour de France trivia facts.
+
+While this post can be read on its own, many juicy details are fully detailed in our [first](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/) and [second](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/) posts using Tour de France data. We recommend checking these first.
+
+Today, we’re taking things further.
+
+
+### What We Learned In The Previous Posts
+
+In our explorations of Tour de France trivia facts, we learned about a few practical coding techniques that we will practice here.
+
+- **Cleaning datasets** to extract usable numbers from messy strings.
+- **Aggregating information** using `tapply()` to infer group statistics.
+- **Evaluating results mindfully** to uncover richer and more accurate insights.
+
+
+### What We’re Tackling Next
+
+In this final post on the Tour de France theme, we’re levelling up.
+
+We will explore more complex questions such as:
+
+- How many riders won the Tour de France without winning a stage *in that year*?
+- Of the riders who won the most Tours, who won with the longest total race time?
+
+These questions will stretch our data skills further, as we will:
+
+    ❶ Combine information across multiple columns and tables.
+    ❷ Further practice data cleaning to prepare our data for robust analysis.
+
+Ready? Let’s dive in.
+
+
+
+## 2. Setting The Scene
+
+
+### 2.1 Installing / Loading Your Packages
+
+As we saw in previous posts, R's default base package contains numerous functionalities. However, it is common to need additional functionalities that can be loaded with packages. This analysis is no different. Today, we will use three packages: `readr`, `stringr`, and `stringi`.
+
+Installing packages in R is straightforward:
+
+```{r echo=TRUE, results='hide'}
+if(!require('readr')) install.packages('readr')
+if(!require('stringr')) install.packages('stringr')
+if(!require('stringi')) install.packages('stringi')
+```
+
+Loading packages is commonly done with the `library(package_name)` function, specifying the package name. However, it only works if the package is already installed on your machine. The code above is slightly longer, but it attempts to load the package using `require()`. If the package is not found, it will first attempt to install it.
+
+
+
+### 2.2 Loading The Data
+
+If you’ve been following along, you’re already familiar with the structure of our Tour de France dataset and how to load it into R. If not, check out the previous post for a step-by-step walkthrough.
+
+For this analysis, we will once again load our three tables:
+
+```{r echo=TRUE, results='hide', warning=FALSE}
+finishers <- read.csv('./data/tdf_finishers.csv')
+stages <- read.csv('./data/tdf_stages.csv')
+tours <- readr::read_csv('./data/tdf_tours.csv', locale=readr::locale(encoding="UTF-8"))
+```
+
+### 2.3 Cleaning The Data
+
+We also identified specific issues with the riders' names in the table. We fixed them as follows. Check [our previous post](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/) for a detailed explanation of these concepts.
+
+```{r echo=TRUE, results='hide', warning=FALSE}
+finishers$Rider <- stringi::stri_trans_general(finishers$Rider, "latin-ascii")
+stages$Winner <- stringi::stri_trans_general(stages$Winner, "latin-ascii")
+finishers[finishers$Rider == "Chris Froome (UK)", 'Rider'] <- "Chris Froome (GBR)"
+stages[stages$Winner == 'Maurice Dewaele (BEL)', 'Winner'] <- 'Maurice De Waele (BEL)'
+```
+
+
+
+## 3. Tour de France Trivia
+
+
+### 3.1 How Many Riders Won the Tour de France Without Winning Any Stage *That Year*?
+
+This question is similar to a question we explored in [the first post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/) (_How Many Riders Won the Tour de France Without Ever Winning a Stage?_), adding a new twist: **Did the winner also win a stage during that specific Tour?**
+
+It’s a subtle but important distinction that requires us to check, **for each edition**, whether the overall winner claimed any stage victories that year.
+
+> **Why does this matter?** In real-world analysis, refining your question often changes your approach entirely. Here, we move from a simple list comparison to a task that requires **merging datasets** to align detailed records across tables. That's why understanding and reframing the problem should always come before coding.
+
+
+#### Theoretical Detour: Merging Datasets
+
+To address this question, we’ll merge our `finishers` and `stages` tables using `Year` as the key:
+
+- `finishers` contains one row per rider per Tour (with their final rank).
+- `stages` contains one row per stage per Tour (with the stage winner).
+
+Since both share `Year`, we can merge them using `merge()`. In our case, since the `Year` columns in both tables have the exact same set of values, we can perform a simple join without overthinking it. However, if this weren’t the case, we would need to decide between:
+
+- `left_join` (keep all rows from the left table),
+- `right_join` (keep all rows from the right table),
+- `inner_join` (keep only rows present in both),
+- and a few other options.
+
+I won’t cover these advanced joins here, but stay tuned for a future post where we’ll tackle them in a clear and practical way. In our case, all these joins would produce the same result.
+
+
+#### Step 1: Merging Tables
+
+Merged datasets can become *very large*. It is always wise to consider whether you can **filter your tables before merging**. In our case, we don’t need the entire `finishers` table but only the rows corresponding to the winners of each edition.
+
+We thus create a `finishers_onlywinners` table containing only the riders who finished **ranked 1** in each Tour de France:
+
+```{r echo=TRUE, results='show'}
+finishers_onlywinners <- finishers[finishers$Rank ==1, ]
+stage_finish <- merge(stages, finishers_onlywinners, by='Year')
+tail(stage_finish, n=10)
+dim(stage_finish)
+```
+
+Since there are many stages in each Tour de France, the `stages` table contained multiple rows per year, while `finishers_onlywinners` had only **one row per year**. During the merge, the information from `finishers_onlywinners` was duplicated as many times as necessary to align with each corresponding stage in `stages`.
+
+
+Thanks to this merge, **each row now displays both the stage winner and the corresponding Tour de France winner for that year**. Now, to address our question, we need to identify all the editions where there is no match between these two columns.
+
+
+#### Step 2: Identify If The Winner Won A Stage
+
+With the merge, we were able to align Tour winners with stage winners. If we directly compare these two columns, we will obtain a boolean vector that tells us whether the two names on each line are identical:
+
+
+```{r echo=TRUE, results='show'}
+stage_finish$stage_and_tour <- stage_finish$Rider == stage_finish$Winner
+head(stage_finish)
+```
+
+We can see that the new column contains TRUE when Maurice Garin, who won the first 1903 Tour de France, also won a stage, and FALSE when he didn't.
+
+The problem has become: Can we find at least one TRUE in that column for each specific year?
+
+> As explained in the [last Tour de France post](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/), this type of problem calls for `tapply()`.
+
+In this case, however, we will not use an existing function, but we will provide our own.
+
+I am focused on identifying the years when the winner did not win any stage, _i.e._ identifying the year when the `stage_and_tour` column only contains FALSE values.
+
+There are several ways to test that, but I will take advantage of one property of the boolean FALSE, which is also equal to 0 in R. Only FALSE values thus mean that the sum of the vector is 0 (0 + 0 + 0 + 0 + 0 ..). We will hence test for which years the sum of all boolean values from `stage_and_tour` is equal to 0.
+
+TRUE means that the Tour winner did not win any stage (sum = 0), while FALSE means that he won at least one stage.
+
+```{r echo=TRUE, results='show'}
+tour_but_no_stage <- tapply(stage_finish$stage_and_tour, stage_finish$Year, function(x) return(sum(x) == 0))
+## Since tour_but_no_stage is a boolean vector, I can use it to subset itself
+## to get the years when the overall winner did not win a single stage
+tour_but_no_stage[tour_but_no_stage]
+```
+
+> 🚴‍♂️ We can conclude that **`r length(tour_but_no_stage[tour_but_no_stage])` Tour de France winners won the overall Tour without winning a single stage in the year they won.**
+
+
+
+#### Bonus Step: Can We Identify The Name of These 9 Riders?
+
+Since we identified the years when these peculiar wins occurred, we can subset one of our tables that contains both `Year` and `Rider` (`finishers_onlywinner` or `stage_finish`).
+
+```{r echo=TRUE, results='show'}
+tour_but_no_stage <- names(tour_but_no_stage[tour_but_no_stage])
+tour_but_no_stage
+winners_no_stage <- unique(stage_finish[stage_finish$Year %in% tour_but_no_stage, c('Year', "Rider")])
+winners_no_stage
+```
+
+The final step consists of checking that no typos persist in the Tour or stage winner names. Since we do not have many names to check, we can do it manually.
+
+In this list of `r nrow(winners_no_stage)` winners, we recognised the names of the three riders we previously identified as Tour winners without ever winning stages (Henri Cornet, Roger Walkowiak, and Egan Bernal). We can therefore visually inspect our data for the remaining six riders:
+
+```{r echo=TRUE, results='show'}
+for(y in 1:nrow(winners_no_stage)) {
+    if(! winners_no_stage[y, 'Rider'] %in% c("Henri Cornet (FRA)", 'Roger Walkowiak (FRA)', 'Egan Bernal (COL)')){
+        print(paste("Winner name", winners_no_stage[y, 'Rider'], sep=": "))
+        print(unique(stage_finish[stage_finish$Year == winners_no_stage[y, 'Year'], ]$Winner))
+        print(noquote(""))
+    }
+}
+```
+
+These six riders conclusively did not win any stage in the year of their win.
+
+📝 **Note**: There are prettier ways to do such checks. However, I used quick and dirty code to demonstrate that it is not always necessary to seek a pretty solution, especially when performing internal checks. If you're asked for some insights from datasets, nobody will care how you arrived at them. The results you found and the confidence you have in them are what matters. So when in doubt, write a quick and dirty check to ensure the data supports your results. A few manual checks are perfectly fine.
+
+
+
+
+
+### 3.2 Of the Riders Who Have Won the Most Tour de France, Who Rode the Most Kilometres?
+
+A handful of cyclists share the record for the most Tour de France wins. But among them, who had to ride the most kilometres to achieve those victories?
+
+Let’s say the record was 8 wins (it’s not — but imagine it was). I’d like to know which rider covered the most kilometres *across their winning editions*. That’s our challenge.
+
+To tackle this, we can break the problem into manageable parts:
+
+1. Identify the current maximum number of wins.
+2. Retrieve the list of riders with that number of wins.
+3. Extract the distance of each Tour de France from the `tours` table.
+4. Sum the distances for each winning rider.
+
+
+#### Step 1: Find the Max Number of Tour Wins
+
+We start by identifying how many times the most decorated riders have won the Tour.
+
+We first subset the finishers table to those riders who ranked first. Then we count how many times each name appears in the list of winners, and we conclude by extracting the names of those who won the most.
+
+
+```{r echo=TRUE, results='show'}
+max_wins <- max(table(finishers[finishers$Rank ==1, "Rider"]))
+paste("The maximum number of Tour victories is", max_wins)
+max_winners <- table(finishers[finishers$Rank == 1, "Rider"])
+max_winners <- max_winners[max_winners == max_wins]
+names(max_winners)
+```
+
+
+➡️ `r length(max_winners)` riders share the record for most Tour de France wins (5). But who among them had to ride the most kilometres?
+
+
+#### Step 2: Clean the Distance Column
+
+The `tours` table contains the total distance for each edition, but the formatting isn’t quite ready for analysis.
+
+Let’s peek at the data:
+
+```{r echo=TRUE, results='show'}
+head(tours)
+```
+
+You’ll notice unusual characters in the `Distance` and `Dates` columns. We’ve seen this [before](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/). It’s time to standardise data again.
+
+
+```{r echo=TRUE, results='show'}
+tours$Distance <- stringi::stri_trans_general(tours$Distance, "latin-ascii")
+head(tours)
+```
+
+The `Distance` column contains entries like `"3,414.4 km (1,121.6 mi)"`. We want to extract only the first number (in km).
+
+We can thus split the distance by a shared pattern among all the distances, which is " km". However, that space-like character is not really a space.
+
+At this point, I am not sure which ASCII character `stringi::stri_trans_general()` chose to replace the non-ASCII one. But it doesn't matter.
+
+We do not need to know what it is to use it.
+
+All we need to do is use one of the distance strings as a template for that pattern by cutting it where necessary. Let's use the distance of the Tour 2022, which does not contain a decimal value.
+
+```{r echo=TRUE, results='show'}
+tours$Distance[109]
+str_pattern <- substr(tours$Distance[109], 6, 8)
+str_pattern
+```
+
+We can then inject this pattern in `stringr::str_split()` to extract the distance in km.
+
+```{r echo=TRUE, results='show'}
+tours$Distance_clean <- stringr::str_split(tours$Distance, str_pattern, simplify=TRUE)[, 1]
+head(tours$Distance_clean)
+```
+
+We're almost there!
+
+You can see that the Distance_clean field is still a character. We need to replace the commas with dots and force the strings to numerical values.
+
+
+```{r echo=TRUE, results='show'}
+tours$Distance_clean <- as.numeric(stringr::str_replace(tours$Distance_clean, "[^^[:alnum:]\\.]", ""))
+tail(tours$Distance_clean)
+```
+
+
+#### Step 3: Merge datasets
+
+Then, we only have to merge the `tours` and `stage_finish` tables, the latter being restricted to the 4 riders who won 5 Tours. For reading purposes, we also sort the table using the `order(, decreasing=TRUE)` function to get the longest Tours at the top.
+
+
+```{r echo=TRUE, results='show'}
+all_dtst <- merge(stage_finish[stage_finish$Rider %in% names(max_winners), ], tours, by='Year')
+all_dtst <- unique(all_dtst[, c('Year', 'Rider', 'Distance_clean')])
+all_dtst[order(all_dtst[, 'Distance_clean'], decreasing=TRUE), ]
+```
+
+Of the four Tour winners with the most victories, Jacques Anquetil, known as Maître Jacques, has won the longest. If we look beyond the first place, we also notice that he actually won 5 of the 6 longest Tours listed here. This is not surprising for those familiar with cycling, as there has been a decreasing trend over the past 100 years.
+
+We can make a simple plot to illustrate this trend:
+
+```{r echo=TRUE, results='show'}
+plot(tours$Year, tours$Distance_clean)
+i=2
+for(rider in names(max_winners)) {
+    points(all_dtst[all_dtst$Rider == rider, c('Year', 'Distance_clean')], col=i, pch=i+13, cex=1.5)
+    i <- i+1
+}
+legend("topright", col=2:5, pch=15:18, names(max_winners))
+```
+
+#### Step 4: Calculate the total distance across all wins
+
+Finally, we can calculate the total distance associated with the 5 winning Tours of each of these champions, using the `tapply()` function we discovered in [the previous blog post](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/).
+
+```{r echo=TRUE, results='show'}
+sort(tapply(all_dtst$Distance_clean, all_dtst$Rider, sum))
+```
+
+Maitre Jacques rode almost 22,000 km to win his five Tours, while Bernard Hinault rode "only" 19,000km.
+
+
+
+## Food for thought
+
+
+1. **R base is more powerful than it looks.** With a bit of care, basic functions like `substr()`, `tapply()`, and `which.min()` can take you surprisingly far, even with messy data and vague questions.
+2. **Break big problems into smaller ones.** Identifying smaller tasks makes analysis easier. Don’t aim to “answer the question” in one go. List out the steps and take them one at a time.
+3. **All roads lead to Rome.** There’s no single “correct” way to solve a data problem. Write the code that makes sense to you. It doesn’t need to be fast, beautiful, or perfect. But it must be clear and correct.
+4. **Know what you're doing and do it with confidence.** Take your time, double-check assumptions, and move forward when things make sense. You don’t need to rush to look competent; clarity is competence.
+
+
+
+> 💛 **Key takeaway:** Good data analysis is not just about getting the numbers, but about understanding *why* they are correct, *how* you arrived at them, and *being mindful of the hidden details* in your data along the way.
+
+
+## What’s Next?
+
+This was the last post on this Tour de France theme. We hope you enjoyed discovering a few data analysis tricks, expanding your data scientist mindset, and learning some handy facts for your next trial pursuit game night with friends.
+
+In the next blog post series, we will continue to use sports data but combine it with the video game universe. ⚽️ x 💧🔥🌱
+
+> 👉 **Stay tuned**, and if you have questions or examples you’d like us to cover in the next post, drop them in the comments below!
+
+
+> 📝 **Your learning challenge until then:** Can you identify the maximum number of stage wins for any given Tour win?
