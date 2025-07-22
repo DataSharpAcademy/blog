@@ -1,4 +1,4 @@
--   [Tour de France Legends: A Data Dive into
+-   [1. Tour de France Legends: A Data Dive into
     Records](#tour-de-france-legends-a-data-dive-into-records)
     -   [What We Learned In The Previous
         Posts](#what-we-learned-in-the-previous-posts)
@@ -15,8 +15,8 @@
     -   [3.2 Of the Riders Who Have Won the Most Tour de France, Who
         Rode the Most
         Kilometres?](#of-the-riders-who-have-won-the-most-tour-de-france-who-rode-the-most-kilometres)
--   [Food for thought](#food-for-thought)
--   [What’s Next?](#whats-next)
+-   [4. Food for thought](#food-for-thought)
+-   [5. What’s Next?](#whats-next)
 
 ------------------------------------------------------------------------
 
@@ -26,7 +26,7 @@ GitHub](https://github.com/DataSharpAcademy/blog/tree/fcf7678f97f14e659db566519b
 
 ------------------------------------------------------------------------
 
-## Tour de France Legends: A Data Dive into Records
+## 1. Tour de France Legends: A Data Dive into Records
 
 Our Tour de France blog series returns for a third and final episode, in
 which we will learn how to combine tables, manipulate strings, and
@@ -61,13 +61,14 @@ We will explore more complex questions such as:
 
 -   How many riders won the Tour de France without winning a stage *in
     that year*?
--   Of the riders who won the most Tours, who won with the longest total
-    race time?
+-   Of the riders who won the most Tours, who rode the most kilometres?
 
 These questions will stretch our data skills further, as we will:
 
-    ❶ Combine information across multiple columns and tables.
-    ❷ Further practice data cleaning to prepare our data for robust analysis.
+❶ Combine information across multiple columns and tables.
+
+❷ Further practice data cleaning to prepare our data for robust
+analysis.
 
 Ready? Let’s dive in.
 
@@ -97,7 +98,7 @@ package is not found, it will first attempt to install it.
 
 If you’ve been following along, you’re already familiar with the
 structure of our Tour de France dataset and how to load it into R. If
-not, check out the previous post for a step-by-step walkthrough.
+not, check out the previous posts for a step-by-step walkthrough.
 
 For this analysis, we will once again load our three tables:
 
@@ -106,7 +107,7 @@ For this analysis, we will once again load our three tables:
     tours <- readr::read_csv('./data/tdf_tours.csv', locale=readr::locale(encoding="UTF-8"))
 
     ## Rows: 109 Columns: 6
-    ## ── Column specification ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    ## ── Column specification ────────────────────────────────────────────────────────────────────────────
     ## Delimiter: ","
     ## chr (3): Dates, Stages, Distance
     ## dbl (3): Year, Starters, Finishers
@@ -134,7 +135,9 @@ This question is similar to a question we explored in [the first
 post](https://datasharpacademy.com/tour-de-france-meets-data-science-a-beginners-case-study/)
 (*How Many Riders Won the Tour de France Without Ever Winning a
 Stage?*), adding a new twist: **Did the winner also win a stage during
-that specific Tour?**
+that specific Tour?** Our previous analysese could only detect the Tour
+winners who never won a stage, but not those who won a stage one year
+and their Tour another.
 
 It’s a subtle but important distinction that requires us to check, **for
 each edition**, whether the overall winner claimed any stage victories
@@ -144,7 +147,7 @@ that year.
 > question often changes your approach entirely. Here, we move from a
 > simple list comparison to a task that requires **merging datasets** to
 > align detailed records across tables. That’s why understanding and
-> reframing the problem should always come before coding.
+> framing the problem should always come before coding.
 
 #### Theoretical Detour: Merging Datasets
 
@@ -265,11 +268,11 @@ vector that tells us whether the two names on each line are identical:
     ## 6 94h 33' 14" La Française           TRUE
 
 We can see that the new column contains TRUE when Maurice Garin, who won
-the first 1903 Tour de France, also won a stage, and FALSE when he
-didn’t.
+the first 1903 Tour de France, also won a stage that year, and FALSE
+when he didn’t.
 
-The problem has become: Can we find at least one TRUE in that column for
-each specific year?
+Our objective has thus now become: Can we find at least one TRUE in that
+column for each specific year?
 
 > As explained in the [last Tour de France
 > post](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/),
@@ -278,11 +281,11 @@ each specific year?
 In this case, however, we will not use an existing function, but we will
 provide our own.
 
-I am focused on identifying the years when the winner did not win any
+We are focused on identifying the years when the winner did not win any
 stage, *i.e.* identifying the year when the `stage_and_tour` column only
 contains FALSE values.
 
-There are several ways to test that, but I will take advantage of one
+There are several ways to test that, but we will take advantage of one
 property of the boolean FALSE, which is also equal to 0 in R. Only FALSE
 values thus mean that the sum of the vector is 0 (0 + 0 + 0 + 0 + 0 ..).
 We will hence test for which years the sum of all boolean values from
@@ -406,7 +409,7 @@ visually inspect our data for the remaining six riders:
 These six riders conclusively did not win any stage in the year of their
 win.
 
-📝 **Note**: There are prettier ways to do such checks. However, I used
+📝 **Note**: There are prettier ways to do such checks. However, we used
 quick and dirty code to demonstrate that it is not always necessary to
 seek a pretty solution, especially when performing internal checks. If
 you’re asked for some insights from datasets, nobody will care how you
@@ -421,7 +424,7 @@ A handful of cyclists share the record for the most Tour de France wins.
 But among them, who had to ride the most kilometres to achieve those
 victories?
 
-Let’s say the record was 8 wins (it’s not — but imagine it was). I’d
+Let’s say the record was 8 wins (it’s not — but imagine it was). We’d
 like to know which rider covered the most kilometres *across their
 winning editions*. That’s our challenge.
 
@@ -437,7 +440,7 @@ To tackle this, we can break the problem into manageable parts:
 We start by identifying how many times the most decorated riders have
 won the Tour.
 
-We first subset the finishers table to those riders who ranked first.
+We first subset the `finishers` table to those riders who ranked first.
 Then we count how many times each name appears in the list of winners,
 and we conclude by extracting the names of those who won the most.
 
@@ -475,8 +478,8 @@ Let’s peek at the data:
     ## 5  1907 "8 July \x96 4 August 1907"  14     "4,488\xa0km (2,…       93        33
     ## 6  1908 "13 July \x96 9 August 1908" 14     "4,497\xa0km (2,…      112        36
 
-You’ll notice unusual characters in the `Distance` and `Dates` columns.
-We’ve seen this
+You’ll notice unusual characters in the `Distance` column. We’ve seen
+this
 [before](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulating-strings/).
 It’s time to standardise data again.
 
@@ -519,21 +522,23 @@ the Tour 2022, which does not contain a decimal value.
 
     ## [1] "�km"
 
+We cut the string betweeen the 6th and 8th positions, which correspond
+to the pattern we seek.
+
 We can then inject this pattern in `stringr::str_split()` to extract the
 distance in km.
 
     tours$Distance_clean <- stringr::str_split(tours$Distance, str_pattern, simplify=TRUE)[, 1]
-    head(tours$Distance_clean)
+    tail(tours$Distance_clean)
 
-    ## [1] "2,428" "2,428" "2,994" "4,637" "4,488" "4,497"
+    ## [1] "3,540"   "3,349"   "3,366"   "3,484"   "3,414.4" "3,328"
 
 We’re almost there!
 
-You can see that the Distance\_clean field is still a character. We need
-to replace the commas with dots and force the strings to numerical
-values.
+You can see that the `Distance_clean` field is still a character. We
+need to remove the commas and force the strings to numerical values.
 
-    tours$Distance_clean <- as.numeric(stringr::str_replace(tours$Distance_clean, "[^^[:alnum:]\\.]", ""))
+    tours$Distance_clean <- as.numeric(stringr::str_replace(tours$Distance_clean, ",", ""))
     tail(tours$Distance_clean)
 
     ## [1] 3540.0 3349.0 3366.0 3484.0 3414.4 3328.0
@@ -582,12 +587,17 @@ We can make a simple plot to illustrate this trend:
     plot(tours$Year, tours$Distance_clean)
     i=2
     for(rider in names(max_winners)) {
-        points(all_dtst[all_dtst$Rider == rider, c('Year', 'Distance_clean')], col=i, pch=i+13, cex=1.5)
+        points(all_dtst[all_dtst$Rider == rider,
+               c('Year', 'Distance_clean')],
+               col=i, pch=i+13, cex=1.5)
         i <- i+1
     }
     legend("topright", col=2:5, pch=15:18, names(max_winners))
 
 ![](2025_07_30_Tour-de-France-3_files/figure-markdown_strict/unnamed-chunk-16-1.png)
+
+**Note**: The `i` variable used in the for loop is only here to select
+colours and symbols. The loop variable is `rider`.
 
 #### Step 4: Calculate the total distance across all wins
 
@@ -604,9 +614,9 @@ post](https://datasharpacademy.com/tour-de-france-meets-data-science-manipulatin
     ##                  21982
 
 Maitre Jacques rode almost 22,000 km to win his five Tours, while
-Bernard Hinault rode “only” 19,000km.
+Bernard Hinault rode “only” 19,000 km.
 
-## Food for thought
+## 4. Food for thought
 
 1.  **R base is more powerful than it looks.** With a bit of care, basic
     functions like `substr()`, `tapply()`, and `which.min()` can take
@@ -628,7 +638,7 @@ Bernard Hinault rode “only” 19,000km.
 > arrived at them, and *being mindful of the hidden details* in your
 > data along the way.
 
-## What’s Next?
+## 5. What’s Next?
 
 This was the last post on this Tour de France theme. We hope you enjoyed
 discovering a few data analysis tricks, expanding your data scientist
@@ -636,7 +646,9 @@ mindset, and learning some handy facts for your next trial pursuit game
 night with friends.
 
 In the next blog post series, we will continue to use sports data but
-combine it with the video game universe. ⚽️ x 💧🔥🌱
+combine it with the video game universe.
+
+**HINT**: ⚽️ x 💧🔥🌱
 
 > 👉 **Stay tuned**, and if you have questions or examples you’d like us
 > to cover in the next post, drop them in the comments below!
